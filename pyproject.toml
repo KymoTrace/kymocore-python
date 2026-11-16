@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kymocore"
-version = "0.1.0"
-description = "Send measurements from Python to KymoStudio (Kymotrace binary protocol)"
+version = "0.2.0"
+description = "KymoStudio telemetry, parameters, live variables, memory and tracing for Python"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -24,10 +24,13 @@ classifiers = [
 [project.optional-dependencies]
 serial = ["pyserial>=3.5"]
 mqtt = ["paho-mqtt>=2.0"]
-test = ["pytest", "pyserial>=3.5", "paho-mqtt>=2.0"]
+test = ["pytest", "pyserial>=3.5", "paho-mqtt>=2.0", "pyelftools>=0.31"]
 
 [project.urls]
 Homepage = "https://kymotrace.de"
 Source = "https://github.com/KymoTrace/kymocore-python"
 Issues = "https://github.com/KymoTrace/kymocore-python/issues"
-Protocol = "https://github.com/KymoTrace/kymocore/blob/main/PROTOCOL.md"
+Protocol = "https://github.com/KymoTrace/kymocore/blob/v8.0.0/docs/PROTOCOL.md"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

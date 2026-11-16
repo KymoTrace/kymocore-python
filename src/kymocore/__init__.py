@@ -3,9 +3,13 @@ import time
 
 from . import transport
 from .protocol import crc8, frame
+from .core import Core
+from .features import Memory, MemoryKind, Parameter, Plot, Sample, Watch, WatchRange, WatchType, WatchVariable
+from .trace import Trace
 
-__all__ = ['Sender', 'frame', 'crc8', 'transport']
-__version__ = '0.1.0'
+__all__ = ['Sender', 'Core', 'Plot', 'Sample', 'Parameter', 'Watch', 'WatchRange',
+           'WatchType', 'WatchVariable', 'Memory', 'MemoryKind', 'Trace', 'frame', 'crc8', 'transport']
+__version__ = '0.2.0'
 
 
 class Sender:
