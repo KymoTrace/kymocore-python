@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version 0.1.0" src="https://img.shields.io/badge/version-0.1.0-7C5CFF">
+  <img alt="Version 0.2.0" src="https://img.shields.io/badge/version-0.2.0-7C5CFF">
   <img alt="License MIT" src="https://img.shields.io/badge/License-MIT-15123A">
   <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-A78BFA">
   <img alt="Transports" src="https://img.shields.io/badge/UDP%20%C2%B7%20TCP%20%C2%B7%20Serial%20%C2%B7%20MQTT-FDE047">
@@ -44,13 +44,20 @@ XY traces or in 3D.
 
 ## What kymocore can do
 
+Version **0.2.0** adds the five KymoCore Embedded 8 feature areas through a
+shared `Core.main()` lifecycle: periodic plots, writable parameters with
+discovery/readback, explicitly mapped live variables, memory telemetry and
+structured tracing. See the [Core compatibility guide](docs/CORE.md) and
+[complete five-feature example](examples/all_features.py). The simple `Sender`
+API below remains available.
+
 | | |
 |---|---|
 | **One call per value** | `send(channel, value)`, optionally with `x=` and `z=` for XY and XYZ charts. Up to 256 channels. |
 | **Timestamps included** | Each value carries the time since the sender started, in microseconds or milliseconds, from a monotonic clock. |
 | **Four transports** | UDP, TCP, serial/USB and MQTT. KymoStudio's existing sources receive them unchanged. |
 | **No dependencies** | The core uses only the standard library. `pyserial` and `paho-mqtt` are optional extras. |
-| **Same protocol as the firmware** | Tested against the golden vectors of [PROTOCOL.md](https://github.com/KymoTrace/kymocore/blob/main/PROTOCOL.md) v6.2, optional CRC-8 checksum. |
+| **Same protocol as the firmware** | Tested against the golden vectors of [PROTOCOL.md](https://github.com/KymoTrace/kymocore/blob/v8.0.0/docs/PROTOCOL.md) v6.2, optional CRC-8 checksum. |
 | **Raw frames too** | `frame()` returns the bytes for a transport of your own. |
 
 ## What it is used for
@@ -116,6 +123,8 @@ Microsecond timestamps need KymoStudio 2.5 or newer.
 
 ## Part of Kymotrace
 
+![How KymoCore, KymoProbe, KymoStudio and kymocore for Python fit together](https://raw.githubusercontent.com/KymoTrace/kymocore-python/main/docs/images/system-en.svg)
+
 | Project | Role |
 |---|---|
 | [KymoCore](https://github.com/KymoTrace/kymocore) | firmware library: capture and send measurements on the microcontroller |
@@ -125,7 +134,11 @@ Microsecond timestamps need KymoStudio 2.5 or newer.
 
 ## Documentation
 
-- **[Protocol](https://github.com/KymoTrace/kymocore/blob/main/PROTOCOL.md):** byte layout, CRC, example frames
+- **[Core guide](docs/CORE.md):** all five features, duplex transports, lifecycle and Embedded compatibility
+- **[All-features example](examples/all_features.py):** runnable TCP/UDP demonstration
+- **[Changelog](CHANGELOG.md):** release history
+
+- **[Protocol](https://github.com/KymoTrace/kymocore/blob/v8.0.0/docs/PROTOCOL.md):** byte layout, CRC, example frames
 - **[Website](https://kymotrace.de):** KymoStudio download, guides and features
 
 ## License

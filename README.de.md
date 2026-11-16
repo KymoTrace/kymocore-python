@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version 0.1.0" src="https://img.shields.io/badge/version-0.1.0-7C5CFF">
+  <img alt="Version 0.2.0" src="https://img.shields.io/badge/version-0.2.0-7C5CFF">
   <img alt="Lizenz MIT" src="https://img.shields.io/badge/Lizenz-MIT-15123A">
   <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-A78BFA">
   <img alt="Transporte" src="https://img.shields.io/badge/UDP%20%C2%B7%20TCP%20%C2%B7%20Seriell%20%C2%B7%20MQTT-FDE047">
@@ -45,13 +45,49 @@ als Kurven, XY-Spuren oder in 3D.
 
 ## Was kymocore kann
 
+Version **0.2.0** ergänzt die fünf Funktionsbereiche von KymoCore Embedded 8
+mit einem gemeinsamen `Core.main()`: zyklische Messwerte, schreibbare Parameter
+mit Erkennung und Rückmeldung, ausdrücklich zugeordnete Live-Variablen,
+Speichertelemetrie und strukturiertes Tracing. Die einfache `Sender`-API bleibt
+erhalten.
+
+```python
+import time
+from kymocore import Core, Parameter, Plot
+
+gain = Parameter(50, 1., minimum=0., maximum=5., name='gain', unit='V')
+with Core.tcp_server(5025, '127.0.0.1',
+                     plots=[Plot(0, lambda: gain.value * 2, period_ms=20)],
+                     parameters=[gain]) as core:
+    ende = time.monotonic() + 30
+    while time.monotonic() < ende:
+        core.main()
+        time.sleep(.001)
+```
+
+In KymoStudio eine TCP-Quelle für `127.0.0.1:5025` verbinden, Kanal 0 anzeigen
+und im Parameterbereich die Parameter abfragen. Änderungen an `gain` werden
+geprüft, zurückgemeldet und wirken auf die Messwerte.
+
+Das [vollständige Beispiel](examples/all_features.py) demonstriert alle fünf
+Funktionen. Der [Core-Leitfaden](docs/CORE.md) beschreibt Schnittstellen,
+Protokollkompatibilität, Grenzen und Prüfungen ausführlich auf Englisch.
+
+Benannte Python-Live-Variablen können eine passende ELF-Symbolkarte exportieren:
+Diese wird im vorhandenen Variablenbrowser von KymoStudio geladen und beschreibt
+die registrierten Lese-Callbacks mit Namen, Typen und virtuellen Adressen.
+Sie enthält keinen ausführbaren Firmware-Code. Speicherwerte benötigen echte Mess-Callbacks;
+automatische Betriebssystem-Scheduler- oder Hardware-Interrupt-Erfassung wird
+nicht vorgetäuscht. Trace-Scopes, Marker, Tasks und Flows können ausdrücklich
+instrumentiert werden. Der Datenaustausch verwendet die Embedded-Protokolle.
+
 | | |
 |---|---|
 | **Ein Aufruf pro Wert** | `send(kanal, wert)`, optional mit `x=` und `z=` für XY- und XYZ-Diagramme. Bis zu 256 Kanäle. |
 | **Zeitstempel inklusive** | Jeder Wert trägt die Zeit seit dem Start des Senders, in Mikro- oder Millisekunden, von einer monotonen Uhr. |
 | **Vier Transporte** | UDP, TCP, Seriell/USB und MQTT. Die vorhandenen Quellen in KymoStudio empfangen sie unverändert. |
 | **Keine Abhängigkeiten** | Der Kern nutzt nur die Standardbibliothek. `pyserial` und `paho-mqtt` sind optionale Extras. |
-| **Dasselbe Protokoll wie die Firmware** | Geprüft gegen die Golden Vectors aus [PROTOCOL.md](https://github.com/KymoTrace/kymocore/blob/main/PROTOCOL.md) v6.2, optionale CRC-8-Prüfsumme. |
+| **Dasselbe Protokoll wie die Firmware** | Geprüft gegen die Golden Vectors aus [PROTOCOL.md](https://github.com/KymoTrace/kymocore/blob/v8.0.0/docs/PROTOCOL.md) v6.2, optionale CRC-8-Prüfsumme. |
 | **Auch rohe Frames** | `frame()` liefert die Bytes für einen eigenen Transport. |
 
 ## Wofür man es einsetzt
@@ -117,6 +153,8 @@ Mikrosekunden-Zeitstempel brauchen KymoStudio 2.5 oder neuer.
 
 ## Teil von Kymotrace
 
+![Wie KymoCore, KymoProbe, KymoStudio und kymocore für Python zusammenspielen](https://raw.githubusercontent.com/KymoTrace/kymocore-python/main/docs/images/system-de.svg)
+
 | Projekt | Rolle |
 |---|---|
 | [KymoCore](https://github.com/KymoTrace/kymocore) | Firmware-Library: Messwerte auf dem Mikrocontroller erfassen und senden |
@@ -126,7 +164,11 @@ Mikrosekunden-Zeitstempel brauchen KymoStudio 2.5 oder neuer.
 
 ## Dokumentation
 
-- **[Protokoll](https://github.com/KymoTrace/kymocore/blob/main/PROTOCOL.md):** Byte-Layout, CRC, Beispiel-Frames (Englisch)
+- **[Core-Leitfaden](docs/CORE.md):** fünf Funktionen, Rückkanal, Lebenszyklus und Embedded-Kompatibilität
+- **[Gesamtbeispiel](examples/all_features.py):** ausführbare TCP-/UDP-Demo
+- **[Änderungen](CHANGELOG.md):** Versionshistorie
+
+- **[Protokoll](https://github.com/KymoTrace/kymocore/blob/v8.0.0/docs/PROTOCOL.md):** Byte-Layout, CRC, Beispiel-Frames (Englisch)
 - **[Website](https://kymotrace.de/de/):** KymoStudio-Download, Anleitungen und Funktionen
 
 ## Lizenz
