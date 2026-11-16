@@ -206,6 +206,31 @@ def test_close_times_out_and_always_releases_transport():
     assert sink.closed
 
 
+def test_close_does_not_sleep_between_successful_partial_writes(monkeypatch):
+    import kymocore.core as core_module
+    from types import SimpleNamespace
+    elapsed = [0.]
+    sleeps = []
+
+    def monotonic():
+        elapsed[0] += .000001
+        return elapsed[0]
+
+    def coarse_sleep(seconds):
+        sleeps.append(seconds)
+        elapsed[0] += .016  # older Windows/Python timers round sleeps upward
+
+    monkeypatch.setattr(core_module, 'time', SimpleNamespace(monotonic=monotonic, sleep=coarse_sleep))
+    sink = Sink(limit=1)
+    core = Core(sink, timestamps=None)
+    for _ in range(20):
+        core.send(0, 1)
+    core.close(timeout=.05)
+    assert core.state == 'stopped'
+    assert sink.data == frame(0, 1) * 20
+    assert sleeps == []
+
+
 @pytest.mark.parametrize('kwargs', [dict(id=0, y=None), dict(id=1.5, y=0), dict(id=0, y=1e100), dict(id=0, y=1, t=-1)])
 def test_frame_rejects_malformed_values(kwargs):
     with pytest.raises(ValueError):

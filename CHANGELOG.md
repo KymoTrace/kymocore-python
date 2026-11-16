@@ -14,6 +14,8 @@
   metadata/dictionary fragmentation, checksums, loss reporting and finite close.
 - Add duplex UDP/TCP/serial/MQTT operation, bounded client queues, independent
   stream parsers, partial-write/backpressure handling and borrowed-buffer support.
+- Drain progressing partial writes without timer delays, including on older
+  Windows/Python runtimes; wait only while the transport makes no progress.
 - Preserve the original Sender API. Reject malformed/overflowing DATA inputs.
 - Add an all-features example, compatibility guide and tests against Embedded
   golden fixtures and the separately installed KymoStudio receiver/model.

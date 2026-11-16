@@ -397,12 +397,13 @@ class Core:
             self.request_stop()
             deadline = time.monotonic() + timeout
             while self.state != 'stopped':
+                progress = (self.diagnostics['bytes_sent'], self.diagnostics['frames_sent'])
                 self.main()
                 if self.state != 'stopped' and time.monotonic() >= deadline:
                     self.state = 'fault'
                     self.error = TimeoutError('Core could not drain the transport before close')
                     raise self.error
-                if self.state != 'stopped':
+                if self.state != 'stopped' and progress == (self.diagnostics['bytes_sent'], self.diagnostics['frames_sent']):
                     time.sleep(.001)
         finally:
             self.sink.close()
